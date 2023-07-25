@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>{{ set.title }}</h1>
+
+
+
+{% if flashcards %}
+    <h3>flashcards are : </h3>
+    <ul>
+    {% for flashcard in flashcards %}
+        <li> <a href={% url 'flashcard' set.id flashcard.id%}> {{ flashcard.word }} : {{ flashcard.definition }}</a> </li>
+
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No flashcards are created.</p>
+{% endif %}
+
+
+<br>
+<a href="{% url 'create-flashcard' set.id %}">create flashcard</a>
+<br>
+<br>
+
+
+<form action="{% url "delete_set" set.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit">delete set</button>
+</form>
+
+</body>
+<a href="{% url "index" %}">back</a>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+
+
+{% if is_edit %}
+    <form action="{% url 'edit_card' set.id card.id%}" method="post">
+{%  else  %}
+    <form action="{% url 'create-flashcard' set.id %}" method="post">
+{% endif %}
+
+
+{% csrf_token %}
+<fieldset>
+    <legend><h1>create set</h1></legend>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+        <label for="word">enter word for card</label>
+        {% if is_edit %}
+            <input id="word" name="word" type="text" value="{{ card.word }}">
+        {%  else  %}
+            <input id="word" name="word" type="text" value="{{ word }}">
+        {% endif %}
+        <br>
+        <br>
+
+        <label for="definition">enter definition for card</label>
+
+        {% if is_edit %}
+            <input id="definition" name="definition" type="text" value="{{ card.definition }}">
+        {%  else  %}
+            <input id="definition" name="definition" type="text" value="{{ definition }}">
+        {% endif %}
+        <br>
+
+
+</fieldset>
+
+{% if is_edit %}
+    <input type="submit" value="edit">
+{%  else  %}
+    <input type="submit" value="create">
+{% endif %}
+
+</form>
+
+
+</body>
+
+</html>
