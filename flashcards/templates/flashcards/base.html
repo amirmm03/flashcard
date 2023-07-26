@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}My amazing site{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'flashcards/style.css' %}" />
 </head>
 <body>
 {% block body %}{% endblock %}

@@ -2,13 +2,27 @@
 {% block body %}
 {% if programs %}
     <h3>programs are : </h3>
-    <ul>
+    <table class="styled-table">
+
+        <tr>
+        <th> title </th>
+
+        <th> created at</th>
+
+        </tr>
+
     {% for program in programs %}
-        <li> <a href="{% url 'program' program.id  %}"> {{ program.title }} </a> </li>
+        <tr>
+        <th> <a href="{% url 'program' program.id  %}"> {{ program.title }} </a> </th>
+
+        <th> {{ program.created_date }} </th>
+
+        </tr>
 
 
     {% endfor %}
-    </ul>
+
+    </table>
 {% else %}
     <p>No programs are created.</p>
 {% endif %}

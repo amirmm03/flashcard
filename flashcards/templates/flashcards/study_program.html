@@ -7,13 +7,34 @@
 
 
 {% if flashcards %}
-    <h3>flashcards are : </h3>
-    <ul>
-    {% for flashcard in flashcards %}
-        <li> <a href={% url 'flashcard' program.id flashcard.id%}> {{ flashcard.word }} : {{ flashcard.definition }}</a> </li>
+
+
+    <h3>cards are : </h3>
+
+    <table class="styled-table">
+        <tr>
+        <th> word </th>
+
+        <th> definition</th>
+
+        <th> last modified</th>
+
+
+        </tr>
+
+    {% for card in flashcards %}
+        <tr>
+        <th> <a href="{% url 'flashcard' program.id card.id %}"> {{ card.word }} </a> </th>
+
+        <th> {{ card.definition }} </th>
+        <th> {{ card.last_modified }} </th>
+
+        </tr>
+
 
     {% endfor %}
-    </ul>
+
+    </table>
 {% else %}
     <p>No flashcards are created.</p>
 {% endif %}

@@ -1,53 +1,21 @@
 {% extends "flashcards/base.html" %}
 {% block body %}
 
-{% if is_edit %}
-    <form action="{% url 'edit_card' program.id card.id%}" method="post" enctype="multipart/form-data">
-{%  else  %}
+
     <form action="{% url 'create-flashcard' program.id %}" method="post" enctype="multipart/form-data">
-{% endif %}
+
 
 
 {% csrf_token %}
 <fieldset>
 
-    {% if is_edit %}
-        <legend><h1>edit flashcard</h1></legend>
-    {%  else  %}
-        <legend><h1>create flashcard</h1></legend>
-    {% endif %}
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <legend><h1>create flashcard</h1></legend>
 
-        <label for="word">enter word for card</label>
-        {% if is_edit %}
-            <input id="word" name="word" type="text" value="{{ card.word }}">
-        {%  else  %}
-            <input id="word" name="word" type="text" value="{{ word }}">
-        {% endif %}
-        <br>
-        <br>
-
-        <label for="definition">enter definition for card</label>
-
-        {% if is_edit %}
-            <input id="definition" name="definition" type="text" value="{{ card.definition }}">
-        {%  else  %}
-            <input id="definition" name="definition" type="text" value="{{ definition }}">
-        {% endif %}
-
-        <br>
-        <br>
-        <label for="pic">Choose a picture:</label>
-        <input type="file" id="pic" name="pic">
-
-
+    {{ form }}
+    <input type="submit" value="create">
 </fieldset>
 
-{% if is_edit %}
-    <input type="submit" value="edit">
-{%  else  %}
-    <input type="submit" value="create">
-{% endif %}
+
 
 </form>
 
