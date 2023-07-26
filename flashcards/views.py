@@ -168,7 +168,6 @@ class CardUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-
 def get_program_and_card(program_pk, card_pk):
     program = get_object_or_404(StudyProgram, pk=program_pk)
     card = get_object_or_404(FlashCard, pk=card_pk)
