@@ -10,15 +10,20 @@
 
 
 {% if is_edit %}
-    <form action="{% url 'edit_card' set.id card.id%}" method="post">
+    <form action="{% url 'edit_card' set.id card.id%}" method="post" enctype="multipart/form-data">
 {%  else  %}
-    <form action="{% url 'create-flashcard' set.id %}" method="post">
+    <form action="{% url 'create-flashcard' set.id %}" method="post" enctype="multipart/form-data">
 {% endif %}
 
 
 {% csrf_token %}
 <fieldset>
-    <legend><h1>create set</h1></legend>
+
+    {% if is_edit %}
+        <legend><h1>edit flashcard</h1></legend>
+    {%  else  %}
+        <legend><h1>create flashcard</h1></legend>
+    {% endif %}
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
         <label for="word">enter word for card</label>
@@ -37,7 +42,11 @@
         {%  else  %}
             <input id="definition" name="definition" type="text" value="{{ definition }}">
         {% endif %}
+
         <br>
+        <br>
+        <label for="pic">Choose a picture:</label>
+        <input type="file" id="pic" name="pic">
 
 
 </fieldset>

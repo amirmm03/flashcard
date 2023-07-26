@@ -11,3 +11,4 @@ class FlashCard(models.Model):
     word = models.CharField(max_length=200)
     definition = models.CharField(max_length=200)
     study_set = models.ForeignKey(StudySet, on_delete=models.CASCADE)
+    photo = models.FileField(upload_to="card_images", null=True)

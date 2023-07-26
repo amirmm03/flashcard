@@ -60,11 +60,8 @@ def create_flashcard(request, setpk, is_edit, cardpk=None, ):
 
     template = loader.get_template("flashcards/create_flashcard.html")
     context = {
-        "set": this_set,
-        "is_edit": is_edit
+
     }
-    if is_edit:
-        context["card"] = get_object_or_404(FlashCard, pk=cardpk)
 
     if request.method == "POST":
 
@@ -75,15 +72,31 @@ def create_flashcard(request, setpk, is_edit, cardpk=None, ):
                 card = get_object_or_404(FlashCard, pk=cardpk)
                 card.word = context["word"]
                 card.definition = context["definition"]
+                if "pic" in request.FILES:
+                    card.photo = request.FILES["pic"]
+                else:
+                    card.photo = None
                 card.save()
                 return HttpResponseRedirect(reverse("flashcard", args=[this_set.id, card.id]))
             else:
-                card = FlashCard.objects.create(word=context["word"], definition=context["definition"],
-                                                study_set=this_set)
+
+                card = FlashCard(word=context["word"], definition=context["definition"], study_set=this_set)
+
+                if "pic" in request.FILES:
+                    card.photo = request.FILES["pic"]
+                card.save()
+
                 return HttpResponseRedirect(reverse("set", args=[this_set.id]))
 
         except:
             pass
+
+    context = {
+        "set": this_set,
+        "is_edit": is_edit
+    }
+    if is_edit:
+        context["card"] = get_object_or_404(FlashCard, pk=cardpk)
 
     return HttpResponse(template.render(context, request))
 
