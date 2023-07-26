@@ -1,0 +1,36 @@
+
+{% extends "flashcards/base.html" %}
+{% block body %}
+
+<h1>{{ program.title }}</h1>
+
+
+
+{% if flashcards %}
+    <h3>flashcards are : </h3>
+    <ul>
+    {% for flashcard in flashcards %}
+        <li> <a href={% url 'flashcard' program.id flashcard.id%}> {{ flashcard.word }} : {{ flashcard.definition }}</a> </li>
+
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No flashcards are created.</p>
+{% endif %}
+
+
+<br>
+<a href="{% url 'create-flashcard' program.id %}">create flashcard</a>
+<br>
+<br>
+
+
+<form action="{% url "delete_program" program.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit">delete program</button>
+</form>
+
+
+<a href="{% url "index" %}">back</a>
+
+{% endblock %}

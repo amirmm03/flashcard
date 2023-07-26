@@ -1,27 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-{% if sets %}
-    <h3>sets are : </h3>
+{% extends "flashcards/base.html" %}
+{% block body %}
+{% if programs %}
+    <h3>programs are : </h3>
     <ul>
-    {% for set in sets %}
-        <li> <a href="{% url 'set' set.id  %}"> {{ set.title }} </a> </li>
+    {% for program in programs %}
+        <li> <a href="{% url 'program' program.id  %}"> {{ program.title }} </a> </li>
 
 
     {% endfor %}
     </ul>
 {% else %}
-    <p>No sets are created.</p>
+    <p>No programs are created.</p>
 {% endif %}
 
 <br>
-<a href="{% url 'create_set' %}">create set</a>
+<a href="{% url 'create_program' %}">create program</a>
 
-
-</body>
-</html>
+{%  endblock %}

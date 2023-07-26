@@ -2,24 +2,33 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from django.urls import reverse
+from django.views.generic import ListView
 
-from flashcards.models import StudySet, FlashCard
+from flashcards.models import StudyProgram, FlashCard
 
 
 # Create your views here.
 
 def index(request):
-    sets = StudySet.objects.all()
 
+    programs = StudyProgram.objects.all()
     template = loader.get_template("flashcards/index.html")
     context = {
-        "sets": sets,
+        "programs": programs,
     }
+
     return HttpResponse(template.render(context))
 
 
-def create_set(request):
-    template = loader.get_template("flashcards/create_set.html")
+class ProgramListView(ListView):
+    model = StudyProgram
+    template_name = "flashcards/index.html"
+    context_object_name = "programs"
+
+
+
+def create_program(request):
+    template = loader.get_template("flashcards/create_program.html")
     context = {
 
     }
@@ -29,8 +38,8 @@ def create_set(request):
         context = request.POST
 
         try:
-            s = StudySet.objects.create(title=context['title'])
-            return HttpResponseRedirect(reverse("set", args=[s.id]))
+            s = StudyProgram.objects.create(title=context['title'])
+            return HttpResponseRedirect(reverse("program", args=[s.id]))
 
         except:
             pass
@@ -38,25 +47,25 @@ def create_set(request):
     return HttpResponse(template.render(context, request))
 
 
-def study_set(request, setpk):
-    this_set = get_object_or_404(StudySet, pk=setpk)
-    template = loader.get_template("flashcards/study_set.html")
+def study_program(request, program_pk):
+    program = get_object_or_404(StudyProgram, pk=program_pk)
+    template = loader.get_template("flashcards/study_program.html")
     context = {
-        "set": this_set,
-        "flashcards": this_set.flashcard_set.all()
+        "program": program,
+        "flashcards": program.flashcard_set.all()
     }
     return HttpResponse(template.render(context, request))
 
 
-def delete_set(request, setpk):
+def delete_program(request, program_pk):
     if request.method == "POST":
-        this_set = get_object_or_404(StudySet, pk=setpk)
-        this_set.delete()
+        this_program = get_object_or_404(StudyProgram, pk=program_pk)
+        this_program.delete()
     return HttpResponseRedirect(reverse("index"))
 
 
-def create_flashcard(request, setpk, is_edit, cardpk=None, ):
-    this_set = get_object_or_404(StudySet, pk=setpk)
+def create_flashcard(request, program_pk, is_edit, card_pk=None, ):
+    program = get_object_or_404(StudyProgram, pk=program_pk)
 
     template = loader.get_template("flashcards/create_flashcard.html")
     context = {
@@ -69,7 +78,7 @@ def create_flashcard(request, setpk, is_edit, cardpk=None, ):
 
         try:
             if is_edit:
-                card = get_object_or_404(FlashCard, pk=cardpk)
+                card = get_object_or_404(FlashCard, pk=card_pk)
                 card.word = context["word"]
                 card.definition = context["definition"]
                 if "pic" in request.FILES:
@@ -77,52 +86,51 @@ def create_flashcard(request, setpk, is_edit, cardpk=None, ):
                 else:
                     card.photo = None
                 card.save()
-                return HttpResponseRedirect(reverse("flashcard", args=[this_set.id, card.id]))
+                return HttpResponseRedirect(reverse("flashcard", args=[program.id, card.id]))
             else:
-
-                card = FlashCard(word=context["word"], definition=context["definition"], study_set=this_set)
+                card = FlashCard(word=context["word"], definition=context["definition"], study_program=program)
 
                 if "pic" in request.FILES:
                     card.photo = request.FILES["pic"]
                 card.save()
 
-                return HttpResponseRedirect(reverse("set", args=[this_set.id]))
+                return HttpResponseRedirect(reverse("program", args=[program.id]))
 
         except:
             pass
 
     context = {
-        "set": this_set,
+        "program": program,
         "is_edit": is_edit
     }
     if is_edit:
-        context["card"] = get_object_or_404(FlashCard, pk=cardpk)
+        context["card"] = get_object_or_404(FlashCard, pk=card_pk)
 
     return HttpResponse(template.render(context, request))
 
 
-def get_set_and_card(setpk, cardpk):
-    this_set = get_object_or_404(StudySet, pk=setpk)
-    card = get_object_or_404(FlashCard, pk=cardpk)
-    if card.study_set != this_set:
-        raise Http404("card is not in this set")
-    return this_set, card
+def get_program_and_card(program_pk, card_pk):
+    program = get_object_or_404(StudyProgram, pk=program_pk)
+    card = get_object_or_404(FlashCard, pk=card_pk)
+    if card.study_program != program:
+        raise Http404("card is not in this program")
+    return program, card
 
 
-def flashcard(request, setpk, cardpk):
-    this_set, card = get_set_and_card(setpk, cardpk)
+def flashcard(request, program_pk, card_pk):
+    program, card = get_program_and_card(program_pk, card_pk)
 
     template = loader.get_template("flashcards/flashcard.html")
     context = {
-        "set": this_set,
+        "program": program,
         "flashcard": card
     }
 
     return HttpResponse(template.render(context, request))
 
 
-def delete_card(request, setpk, cardpk):
-    this_set, card = get_set_and_card(setpk, cardpk)
+def delete_card(request, program_pk, card_pk):
+    program, card = get_program_and_card(program_pk, card_pk)
     if request.method == "POST":
         card.delete()
-    return HttpResponseRedirect(reverse("set", args=[setpk]))
+    return HttpResponseRedirect(reverse("program", args=[program_pk]))

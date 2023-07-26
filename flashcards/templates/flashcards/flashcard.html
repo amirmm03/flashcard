@@ -1,27 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-<h1>{{ set.title }}</h1>
+{% extends "flashcards/base.html" %}
+{% block body %}
+<h1>{{ program.title }}</h1>
 
 
-    <img src="/media/{{ flashcard.photo }}" alt="you have no picture">
-    <h3> {{ flashcard.word }} : {{ flashcard.definition }} </h3>
+<img src=" {{ flashcard.photo.url }} " alt="you have no picture">
+<h3> {{ flashcard.word }} : {{ flashcard.definition }} </h3>
 
 
-<a href="{% url "edit_card" set.id flashcard.id%}">edit card</a>
+<a href="{% url "edit_card" program.id flashcard.id%}">edit card</a>
 
 
-<form action="{% url "delete_card" set.id flashcard.id%}" method="post">
+<form action="{% url "delete_card" program.id flashcard.id%}" method="post">
     {% csrf_token %}
     <button type="submit">delete flashcard</button>
 </form>
 
 
-</body>
-<a href="{% url "set" set.id %}">back</a>
-</html>
+
+<a href="{% url "program" program.id %}">back</a>
+
+{% endblock %}
