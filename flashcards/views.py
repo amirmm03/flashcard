@@ -93,5 +93,4 @@ class CardDeleteView(DeleteView):
     template_name = "flashcards/delete.html"
 
     def get_success_url(self):
-
         return reverse("program", args=[self.kwargs["program_pk"]])
