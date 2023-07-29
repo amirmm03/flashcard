@@ -8,6 +8,8 @@
         <th> title </th>
 
         <th> created at</th>
+        <th> modified at</th>
+
 
         </tr>
 
@@ -15,7 +17,8 @@
         <tr>
         <th> <a href="{% url 'program' program.id  %}"> {{ program.title }} </a> </th>
 
-        <th> {{ program.created_date }} </th>
+        <th> {{ program.created }} </th>
+        <th> {{ program.updated }} </th>
 
         </tr>
 

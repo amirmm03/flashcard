@@ -17,6 +17,7 @@
 
         <th> definition</th>
 
+        <th> created </th>
         <th> last modified</th>
 
 
@@ -27,7 +28,8 @@
         <th> <a href="{% url 'flashcard' program.id card.id %}"> {{ card.word }} </a> </th>
 
         <th> {{ card.definition }} </th>
-        <th> {{ card.last_modified }} </th>
+        <th> {{ card.created }} </th>
+        <th> {{ card.updated }} </th>
 
         </tr>
 
@@ -45,13 +47,14 @@
 <br>
 <br>
 
+<a href="{% url "delete_program" program.id %}">    <button type="submit">delete program</button>  </a>
 
-<form action="{% url "delete_program" program.id %}" method="post">
-    {% csrf_token %}
-    <button type="submit">delete program</button>
-</form>
+<br>
+<br>
 
 
 <a href="{% url "index" %}">back</a>
+
+
 
 {% endblock %}
