@@ -12,12 +12,10 @@
 
 <a href="{% url "edit_card" program.id flashcard.id%}">edit card</a>
 
+<br><br>
 
-<form action="{% url "delete_card" program.id flashcard.id%}" method="post">
-    {% csrf_token %}
-    <button type="submit">delete flashcard</button>
-</form>
-
+<a href="{% url "delete_card" program.id  flashcard.id%}">    <button type="submit">delete flashcard</button>  </a>
+<br><br>
 
 <a href="{% url "program" program.id %}">back</a>
 
