@@ -34,12 +34,6 @@ class ProgramDetailView(DetailView):
         return context
 
 
-#
-# def delete_program(request, program_pk):
-#     if request.method == "POST":
-#         this_program = get_object_or_404(StudyProgram, pk=program_pk)
-#         this_program.delete()
-#     return HttpResponseRedirect(reverse("index"))
 
 class ProgramDeleteView(DeleteView):
     model = StudyProgram
@@ -94,11 +88,6 @@ class CardDetailView(DetailView):
         return context
 
 
-# def delete_card(request, program_pk, card_pk):
-#     program, card = get_program_and_card(program_pk, card_pk)
-#     if request.method == "POST":
-#         card.delete()
-#     return HttpResponseRedirect(reverse("program", args=[program_pk]))
 
 class CardDeleteView(DeleteView):
     model = FlashCard
