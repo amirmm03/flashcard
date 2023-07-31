@@ -2,52 +2,85 @@
 {% extends "flashcards/base.html" %}
 {% block body %}
 
-<h1>{{ program.title }}</h1>
+    <script>
+
+    const xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+
+        const obj = JSON.parse(this.responseText);
+
+        document.getElementById("title").innerHTML=obj.title;
 
 
-
-{% if flashcards %}
-
-
-    <h3>cards are : </h3>
-
-    <table class="styled-table">
-        <tr>
-        <th> word </th>
-
-        <th> definition</th>
-
-        <th> created </th>
-        <th> last modified</th>
+        let fill = document.getElementById("fill")
+        if (obj.flashcard_set.length ===0 ){
+            let p = document.createElement("p")
+            p.innerHTML = "No flashcards are created."
+            fill.appendChild(p)
+            return
+        }
 
 
-        </tr>
-
-    {% for card in flashcards %}
-        <tr>
-        <th> <a href="{% url 'flashcard' program.id card.id %}"> {{ card.word }} </a> </th>
-
-        <th> {{ card.definition }} </th>
-        <th> {{ card.created }} </th>
-        <th> {{ card.updated }} </th>
-
-        </tr>
+        let h3 = document.createElement("h3");
+        h3.textContent =" cards are : "
+        fill.appendChild(h3)
 
 
-    {% endfor %}
+        let table = document.createElement("table");
+        table.className = "styled-table"
 
-    </table>
-{% else %}
-    <p>No flashcards are created.</p>
-{% endif %}
+        let row = table.insertRow(-1)
+        row.insertCell().outerHTML = "<th> word </th>"
+        row.insertCell().outerHTML = "<th> definition </th>"
+        row.insertCell().outerHTML = "<th> created </th>"
+        row.insertCell().outerHTML = "<th> modified at </th>"
+
+        for (let i in obj.flashcard_set) {
+            let card_id = obj.flashcard_set[i]
+            let row = table.insertRow(-1)
+            let cell = row.insertCell()
+            let a = document.createElement("a")
+            a.href = "/flashcards/program/{{ id }}/flashcard/" + card_id
+
+            const req = new XMLHttpRequest();
+            req.onload=function () {
+                data = JSON.parse(this.responseText);
+                console.log(this.responseText)
+                a.innerHTML=data.word
+                cell.appendChild(a)
+                row.insertCell().innerHTML = data.definition
+                row.insertCell().innerHTML = data.created
+                row.insertCell().innerHTML = data.updated
+
+            }
+            req.open("GET", "/flashcards/api/cards/"+ card_id +"/")
+            req.send()
+
+
+        }
+
+        fill.appendChild(table)
+
+    }
+
+    xhttp.open("GET", "{% url 'group-detail' id %}", true);
+    xhttp.send();
+
+    </script>
+
+    <h1 id="title"></h1>
+
+    <div id="fill"></div>
+
+
 
 
 <br>
-<a href="{% url 'create-flashcard' program.id %}">create flashcard</a>
+<a href="{% url 'create-flashcard' id %}">create flashcard</a>
 <br>
 <br>
 
-<a href="{% url "delete_program" program.id %}">    <button type="submit">delete program</button>  </a>
+<a href="{% url "delete_program" id %}">    <button type="submit">delete program</button>  </a>
 
 <br>
 <br>

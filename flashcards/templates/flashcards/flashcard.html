@@ -1,22 +1,61 @@
 {% extends "flashcards/base.html" %}
 {% block body %}
-<h1>{{ program.title }}</h1>
-
-{% if flashcard.photo %}
-    <img src=" {{ flashcard.photo.url }} " alt="ERROR">
-{% else %}
-    <p>you have no picture </p>
-{% endif %}
-<h3> {{ flashcard.word }} : {{ flashcard.definition }} </h3>
 
 
-<a href="{% url "edit_card" program.id flashcard.id%}">edit card</a>
+
+    <script>
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {
+
+            const obj = JSON.parse(this.responseText);
+
+
+            let fill = document.getElementById("fill")
+            if (obj.photo === null){
+
+                let p = document.createElement("p")
+                p.innerHTML = " you have no picture! "
+                fill.appendChild(p)
+
+            }else {
+
+
+
+                let img = document.createElement("img")
+                img.src = obj.photo
+                img.alt= "ERROR"
+                fill.appendChild(img)
+
+            }
+
+
+            let h3 = document.createElement("h3");
+            h3.textContent = obj.word +  " : " + obj.definition
+            fill.appendChild(h3)
+
+
+
+        }
+
+        xhttp.open("GET", "{% url 'card-detail' card_id %}", true);
+        xhttp.send();
+
+
+    </script>
+
+
+
+<div id="fill"></div>
+
+
+
+<a href="{% url "edit_card" program_id card_id%}">edit card</a>
 
 <br><br>
 
-<a href="{% url "delete_card" program.id  flashcard.id%}">    <button type="submit">delete flashcard</button>  </a>
+<a href="{% url "delete_card" program_id  card_id%}">    <button type="submit">delete flashcard</button>  </a>
 <br><br>
 
-<a href="{% url "program" program.id %}">back</a>
+<a href="{% url "program" program_id %}">back</a>
 
 {% endblock %}

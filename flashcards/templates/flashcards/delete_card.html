@@ -1,0 +1,36 @@
+{% extends "flashcards/base.html" %}
+{% block body %}
+    <script>
+    function  send(){
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {
+
+
+
+            if (this.status === 204)
+                window.location.href = "/flashcards/program/{{ gr }}/";
+            else{
+                const obj = JSON.parse(this.responseText);
+                for (let i in (obj)) {
+                    let str = String(i) + " : "
+                    str += String(obj[i])
+                    console.log(str)
+                    alert(str)
+                }
+            }
+
+
+        }
+
+        xhttp.open("DELETE", "{% url 'card-detail' id %}", true);
+        xhttp.send();
+    }
+    </script>
+
+<form method="post" action="javascript:void(0);">{% csrf_token %}
+    <p>Are you sure you want to delete "{{ object }}"?</p>
+    {{ form }}
+    <input type="submit" value="Confirm" onclick="send()">
+</form>
+
+{% endblock %}

@@ -1,8 +1,47 @@
 {% extends "flashcards/base.html" %}
 {% block body %}
 
+    <script>
+    function send() {
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {
+            console.log(this.responseText)
+            const obj = JSON.parse(this.responseText);
 
-    <form action="{% url 'create-flashcard' program.id %}" method="post" enctype="multipart/form-data">
+
+            if (this.status===201){
+                window.location.href = "/flashcards/program/{{ group_id }}/flashcard/" + obj.id ;
+            }
+
+            else{
+                for (let i in (obj)) {
+                    let str = String(i) + " : "
+                    str += String(obj[i])
+
+                    alert(str)
+                }
+            }
+
+        }
+
+        let formData = new FormData();
+        formData.append("word", document.querySelector('#id_word').value);
+        formData.append("definition", document.querySelector('#id_definition').value);
+        if (document.getElementById('id_photo').files.length>0)
+            formData.append("photo",document.getElementById('id_photo').files[0])
+        formData.append("study_program" , {{ group_id }})
+
+
+
+
+
+
+        xhttp.open("POST", "{% url 'card-list' %}", true);
+        {#xhttp.setRequestHeader("Content-type", "multipart/form-data");#}
+        xhttp.send(formData);
+    }
+    </script>
+    <form action="javascript:void(0);" enctype="multipart/form-data" method="post">
 
 
 
@@ -12,7 +51,7 @@
     <legend><h1>create flashcard</h1></legend>
 
     {{ form.as_p }}
-    <input type="submit" value="create">
+    <input type="submit" value="create" onclick="send()">
 </fieldset>
 
 

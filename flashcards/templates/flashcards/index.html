@@ -1,34 +1,62 @@
 {% extends "flashcards/base.html" %}
 {% block body %}
-{% if programs %}
-    <h3>programs are : </h3>
-    <table class="styled-table">
 
-        <tr>
-        <th> title </th>
+    <script>
 
-        <th> created at</th>
-        <th> modified at</th>
+    const xhttp = new XMLHttpRequest();
+    xhttp.onload = function() {
+
+        const obj = JSON.parse(this.responseText);
+        if (obj.length ===0 ){
+            document.getElementById("empty").innerHTML = "No programs are created."
+            return
+        }
+
+        let fill = document.getElementById("fill")
+
+        let h3 = document.createElement("h3");
+        h3.textContent =" programs are : "
+        fill.appendChild(h3)
+
+        let table = document.createElement("table");
+        table.className = "styled-table"
+
+        let row = table.insertRow(-1)
+        row.insertCell().outerHTML = "<th> title </th>"
+        row.insertCell().outerHTML = "<th> created at </th>"
+        row.insertCell().outerHTML = "<th> modified at </th>"
+
+        for (let i in obj) {
+            let data = obj[i]
+            let row = table.insertRow(-1)
+            let cell = row.insertCell()
+            let a = document.createElement("a")
+            a.href = "/flashcards/program/" + data.id + "/"
+          {# a.href = "{% url 'program' data.id  %}"#}
+            a.innerHTML=data.title
+            cell.appendChild(a)
+            row.insertCell().innerHTML = data.created
+            row.insertCell().innerHTML = data.updated
+
+        }
+
+        fill.appendChild(table)
+
+    }
+
+    xhttp.open("GET", "{% url 'group-list' %}", true);
+    xhttp.send();
+
+    </script>
 
 
-        </tr>
 
-    {% for program in programs %}
-        <tr>
-        <th> <a href="{% url 'program' program.id  %}"> {{ program.title }} </a> </th>
+    <div id="empty">
 
-        <th> {{ program.created }} </th>
-        <th> {{ program.updated }} </th>
+    </div>
+    <div id="fill">
 
-        </tr>
-
-
-    {% endfor %}
-
-    </table>
-{% else %}
-    <p>No programs are created.</p>
-{% endif %}
+    </div>
 
 <br>
 <a href="{% url 'create_program' %}">create program</a>

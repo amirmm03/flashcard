@@ -1,11 +1,10 @@
-import datetime
-
-from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
+from rest_framework import viewsets
 
 from flashcards.models import StudyProgram, FlashCard
+from flashcards.serializers import StudyProgramSerializer, FlashCardSerializers
 
 
 class ProgramListView(ListView):
@@ -30,7 +29,8 @@ class ProgramDetailView(DetailView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in the publisher
-        context["flashcards"] = self.object.flashcard_set.all()
+        context["id"] = self.kwargs["program_pk"]
+
         return context
 
 
@@ -38,7 +38,12 @@ class ProgramDeleteView(DeleteView):
     model = StudyProgram
     success_url = reverse_lazy("index")
     pk_url_kwarg = "program_pk"
-    template_name = "flashcards/delete.html"
+    template_name = "flashcards/delete_group.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["id"] = self.kwargs["program_pk"]
+        return context
 
 
 class FlashcardCreateView(CreateView):
@@ -54,6 +59,7 @@ class FlashcardCreateView(CreateView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         context["program"] = get_object_or_404(StudyProgram, pk=self.kwargs["program_pk"])
+        context["group_id"] = self.kwargs["program_pk"]
 
         return context
 
@@ -69,6 +75,7 @@ class CardUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         context["program"] = get_object_or_404(StudyProgram, pk=self.kwargs["program_pk"])
         context["card"] = get_object_or_404(FlashCard, pk=self.kwargs["card_pk"])
+        context["group_id"] = self.kwargs["program_pk"]
 
         return context
 
@@ -82,7 +89,8 @@ class CardDetailView(DetailView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        context["program"] = get_object_or_404(StudyProgram, pk=self.kwargs["program_pk"])
+        context["program_id"] = self.kwargs["program_pk"]
+        context["card_id"] = self.kwargs["card_pk"]
 
         return context
 
@@ -90,7 +98,25 @@ class CardDetailView(DetailView):
 class CardDeleteView(DeleteView):
     model = FlashCard
     pk_url_kwarg = "card_pk"
-    template_name = "flashcards/delete.html"
+    template_name = "flashcards/delete_card.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["id"] = self.kwargs["card_pk"]
+        context["gr"] = self.kwargs["program_pk"]
+
+        return context
 
     def get_success_url(self):
         return reverse("program", args=[self.kwargs["program_pk"]])
+
+
+########################################## api views ##########################################
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = StudyProgram.objects.all()
+    serializer_class = StudyProgramSerializer
+
+
+class CardViewSet(viewsets.ModelViewSet):
+    queryset = FlashCard.objects.all()
+    serializer_class = FlashCardSerializers

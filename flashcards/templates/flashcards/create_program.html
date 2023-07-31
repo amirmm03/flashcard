@@ -1,21 +1,46 @@
 {% extends "flashcards/base.html" %}
 {% block body %}
-<form action="{% url 'create_program' %}" method="post">
-{% csrf_token %}
 
-{#    #}
-{#    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}#}
-{##}
-{#        <label for="title">enter title for program</label>#}
-{#        <input id="title" name="title" type="text" value="{{ title }}">#}
-{#        <br>#}
-{##}
-{##}
+    <script>
+    function send() {
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {
+            const obj = JSON.parse(this.responseText);
+            console.log(obj);
+
+            if (this.status===201){
+
+                window.location.href = "/flashcards/program/" + obj.id + "/";
+            }
+            else{
+                for (let i in (obj)) {
+                    let str = String(i) + " : "
+                    str += String(obj[i])
+                    console.log(str)
+                    alert(str)
+                }
+            }
+
+        }
+
+
+        params = {
+            title : document.querySelector('#id_title').value,
+        }
+
+
+        xhttp.open("POST", "{% url 'group-list' %}", true);
+        xhttp.setRequestHeader("Content-type", "application/json");
+        xhttp.send(JSON.stringify(params));
+    }
+    </script>
+<form method="post" action="javascript:void(0);">
+{% csrf_token %}
 
     <fieldset>
     <legend><h1>create program</h1></legend>
         {{ form.as_p }}
-    <input type="submit" value="create">
+    <input type="submit" value="create" onclick="send()">
     </fieldset>
 </form>
 
